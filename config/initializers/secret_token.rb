@@ -13,12 +13,13 @@
 require 'securerandom'
 
 def secure_token
+  token_file = Rails.root.join('.secret')
   if File.exists?(token_file)
   	#Use the existing token
   	File.read(token_file).chomp
   else
   	# Generate a new token and store in in token_file
-  	token = SecureRandon.hex(64)
+  	token = SecureRandom.hex(64)
   	File.write(token_file, token)
   	token
   end
