@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Users do
+describe User do
 
-  before { @user = Users.new(name: "Example User", email: "User2@example.com",
+  before { @user = User.new(name: "Example User", email: "User2@example.com",
                               password: "foobar", password_confirmation: "foobar") }
 
   subject { @user }
@@ -34,7 +34,7 @@ describe Users do
   describe "when email format is invalid" do
     it "should be invalid" do
       addresses = %w[user@foo,com user_at_foo.org example.user@foo. 
-                      foo@bar_baz.com foo@bar+bazcom]
+                  foo@bar_baz.com foo@bar+bazcom foo@bar..com]
       addresses.each do |invalid_address|
         @user.email = invalid_address
         expect(@user).not_to be_valid
@@ -64,7 +64,7 @@ describe Users do
 
   describe "when password is not present" do
     before do
-      @user = Users.new(name: "Example User", email: "User2@example.com",
+      @user = User.new(name: "Example User", email: "User2@example.com",
                               password: " ", password_confirmation: " ")
     end
     it { should_not be_valid }
@@ -82,7 +82,7 @@ describe Users do
 
   describe "return value of authenticate method" do
     before { @user.save }
-    let(:found_user) { Users.find_by(email: @user.email) }
+    let(:found_user) { User.find_by(email: @user.email) }
 
     describe "with valid password" do
       it { should eq found_user.authenticate(@user.password) } # eq means equal
@@ -93,6 +93,16 @@ describe Users do
 
       it { should_not eq user_for_invalid_password }
       specify { expect(user_for_invalid_password).to be_false } #synonym for it
+    end
+  end
+
+  describe "email address with mixed case" do
+    let(:mixed_case_email) { "Foo@ExAMPle.Com" }
+
+    it "should be saved as all lower-case" do
+      @user.email = mixed_case_email
+      @user.save
+      expect(@user.reload.email).to eq mixed_case_email.downcase
     end
   end 
 end
