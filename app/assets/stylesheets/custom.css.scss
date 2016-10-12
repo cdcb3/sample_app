@@ -134,6 +134,9 @@ footer {
 .full-width {
   padding-left: $sideIndention;
   padding-right: $sideIndention;
+  .alert {
+    margin-top: 15px;
+  }
 }
 
 aside {
@@ -150,11 +153,11 @@ aside {
       line-height: 1;
     }
     h1 {
-      font-size: 2em;
+      font-size: 1.8em;
       text-align: left;
       letter-spacing: -1px;
       margin-bottom: 3px;
-      margin-top: 8%;
+      margin-top: 8px;
     }
   }
 }
