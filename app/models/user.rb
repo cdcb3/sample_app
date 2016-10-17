@@ -1,10 +1,10 @@
 class User < ActiveRecord::Base
   #before_save { self.email = email.downcase }
-
+  has_many :microposts, dependent: :destroy                                       # the ones belonging to the given user to be destroyed when the user itself is destroyed
   validates :name,  presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
   before_save { email.downcase! }
-  before_create :create_remember_token # Will look for a method in the argument
+  before_create :create_remember_token                                            # Will look for a method in the argument
   validates :email, presence: true, 
             format: { with: VALID_EMAIL_REGEX },
             uniqueness: { case_sensitive: false }
@@ -19,10 +19,14 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest(token.to_s)
   end
 
+  #method that handles feed
+  def feed
+    Micropost.where("user_id = ?", id) #can also be written as microposts
+  end
+
   private
 
     def create_remember_token
-      #without self, the assignment would create a local variable
-      self.remember_token = User.digest(User.new_remember_token)
+      self.remember_token = User.digest(User.new_remember_token)                  #without self, the assignment would create a local variable
     end
 end

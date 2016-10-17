@@ -6,15 +6,14 @@ class UsersController < ApplicationController
 
   def index
     #@user = User.all
-    if signed_in?
-      @users = User.paginate(page: params[:page]) #params[:page] -default to 30 , :per_page => 20
-    else
-        signed_in_user
-    end
+    signed_in_user
+    @users = User.paginate(page: params[:page]) #params[:page] -default to 30 , :per_page => 20
   end
 
   def show
+    signed_in_user
     @user = User.find(params[:id])                #gets the users/1 paramaters
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def new
@@ -65,10 +64,13 @@ class UsersController < ApplicationController
     end
 
     #Before filters
-    def signed_in_user
-      store_location
-      redirect_to signin_url, notice: "Please sign in." unless signed_in?
-    end
+    ## Moved to the session helper
+    #def signed_in_user
+    #  unless signed_in?
+    #    store_location
+    #    redirect_to signin_url, notice: "Please sign in." unless signed_in?
+    #  end
+    #end
 
     def correct_user
       @user = User.find(params[:id])
